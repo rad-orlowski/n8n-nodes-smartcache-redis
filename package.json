@@ -1,0 +1,52 @@
+{
+  "name": "n8n-nodes-smartcache-redis",
+  "version": "0.1.0",
+  "description": "n8n community node for intelligent caching with automatic hash generation and TTL support, backed by Redis. Fork of n8n-nodes-smartcache with the S3 storage backend replaced by Redis.",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "cache",
+    "redis",
+    "performance",
+    "workflow",
+    "automation"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/rad-orlowski/n8n-nodes-smartcache-redis#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rad-orlowski/n8n-nodes-smartcache-redis.git"
+  },
+  "author": {
+    "name": "Rad Orlowski"
+  },
+  "scripts": {
+    "build": "tsc && copyfiles -f nodes/SmartCacheRedis/smartCacheRedis.svg dist/nodes/SmartCacheRedis/",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [],
+    "nodes": [
+      "dist/nodes/SmartCacheRedis/SmartCacheRedis.node.js"
+    ]
+  },
+  "dependencies": {
+    "ioredis": "^5.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "copyfiles": "^2.4.1",
+    "typescript": "5.9.2"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "engines": {
+    "node": ">=18.10"
+  }
+}
