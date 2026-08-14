@@ -134,7 +134,7 @@ const handleCacheHit = async (
   const head = await backend.head(cachePath)
   if (!head) return { status: 'miss' as const }
   if (ttl > 0) {
-    const cacheAge = (Date.now() - head.lastModified.getTime()) / (1000 * 60 * 60)
+    const cacheAge = (Date.now() - head.lastModified.getTime()) / 1000
     if (cacheAge >= ttl) {
       return { status: 'expired' as const, cacheAge }
     }
@@ -310,12 +310,12 @@ export class SmartCacheRedis implements INodeType {
           'Comma-separated list of fields to use for cache key generation. Leave empty to use entire input for more precise caching.',
       },
       {
-        displayName: 'TTL (Hours)',
+        displayName: 'TTL (Seconds)',
         name: 'ttl',
         type: 'number',
-        default: 24,
+        default: 86400,
         description:
-          'Time-to-live for cache entries in hours, applied as a native Redis key expiry. Use 0 for infinite.',
+          'Time-to-live for cache entries in seconds, applied as a native Redis key expiry. Use 0 for infinite.',
       },
     ],
   }

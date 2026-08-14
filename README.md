@@ -54,7 +54,7 @@ Then create (or reuse) a **Redis credential**: host, port, database, password �
 2. Connect **Cache Miss** → your expensive node → back into the **Write** input
 3. Connect **Cache Hit** and the expensive node's output (or the Write pass-through) to the rest of your workflow
 4. Set **Cache Key Fields** (e.g. `id,url`) so the hash covers only the fields that identify the work — or leave empty to hash the full item JSON
-5. Set **TTL (Hours)** — `0` keeps entries forever (until Redis LRU evicts them)
+5. Set **TTL (Seconds)** — `0` keeps entries forever (until Redis LRU evicts them)
 
 ### Key prefix
 
@@ -68,7 +68,7 @@ Keys are written as `{prefix}/{sha256}.cache`. The prefix isolates caches from e
 | **Batch Mode** | Boolean | `false` | Process all input items as one cache unit |
 | **Force Miss** | Boolean | `false` | Bypass reads; regenerate and rewrite the cache |
 | **Cache Key Fields** | String | `` | Comma-separated fields hashed into the key (empty = whole item) |
-| **TTL (Hours)** | Number | `24` | Native Redis key expiry. `0` = never expires |
+| **TTL (Seconds)** | Number | `86400` | Native Redis key expiry. `0` = never expires |
 
 ## Differences from upstream (S3) SmartCache
 

@@ -33,7 +33,7 @@ export class RedisBackend implements CacheBackend {
   private client: Redis
   private ttlSeconds: number
 
-  constructor(creds: RedisCredentials, ttlHours: number) {
+  constructor(creds: RedisCredentials, ttlSeconds: number) {
     const options: Record<string, unknown> = {
       host: creds.host || 'localhost',
       port: creds.port || 6379,
@@ -55,7 +55,7 @@ export class RedisBackend implements CacheBackend {
         : {}),
     }
     this.client = new Redis(options)
-    this.ttlSeconds = ttlHours > 0 ? Math.round(ttlHours * 3600) : 0
+    this.ttlSeconds = ttlSeconds > 0 ? Math.round(ttlSeconds) : 0
   }
 
   async ensureConnection(): Promise<void> {
