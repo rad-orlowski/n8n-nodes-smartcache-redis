@@ -25,7 +25,7 @@ import {
 import { CacheBackend, joinPrefix } from './storage'
 import { RedisBackend } from './redisStorage'
 
-const getItemIndex = (pairedItem: INodeExecutionData['pairedItem']): number => {
+export const getItemIndex = (pairedItem: INodeExecutionData['pairedItem']): number => {
   if (Array.isArray(pairedItem)) {
     return pairedItem[0]?.item ?? 0
   }
@@ -108,7 +108,7 @@ const generateCacheMetadata = (
   }
 }
 
-const writeToCache = async (
+export const writeToCache = async (
   items: INodeExecutionData | INodeExecutionData[],
   context: IContextObject,
   backend?: CacheBackend,
@@ -144,7 +144,7 @@ const handleCacheHit = async (
   return { status: 'hit' as const, content }
 }
 
-const processBatch = async (
+export const processBatch = async (
   items: INodeExecutionData[],
   context: IContextObject,
   cacheKeyFields: string,
@@ -177,7 +177,19 @@ const processBatch = async (
   try {
     const result = await handleCacheHit($smartCache.cachePath, ttl, backend)
     if (result.status === 'hit') {
-      return { hits: Array.isArray(result.content) ? result.content : [result.content], misses: [] }
+      const cached = Array.isArray(result.content) ? result.content : [result.content]
+      // Cache content was written by a PRIOR execution and carries that execution's
+      // pairedItem indices. Those indices are meaningless (or point at the wrong item)
+      // in the CURRENT execution's input array — re-stamp each hit to the current item
+      // it corresponds to, so nodes wired to "Cache Hit" can trace lineage back through
+      // this node's own "Input" connection.
+      const hits = cached.map((hitItem, i) => {
+        const currentItem = items[i]
+        return currentItem
+          ? { ...hitItem, pairedItem: { item: getItemIndex(currentItem.pairedItem) } }
+          : hitItem
+      })
+      return { hits, misses: [] }
     }
     return { hits: [], misses: items }
   } catch (error) {
@@ -189,7 +201,7 @@ const processBatch = async (
   }
 }
 
-const processSingleItem = async (
+export const processSingleItem = async (
   item: INodeExecutionData,
   context: IContextObject,
   cacheKeyFields: string,
@@ -218,7 +230,10 @@ const processSingleItem = async (
   try {
     const result = await handleCacheHit($smartCache.cachePath, ttl, backend)
     if (result.status === 'hit') {
-      return { hit: result.content, miss: null }
+      // Same reason as the batch path above: re-stamp pairedItem to this execution's
+      // item index rather than replaying the write-time execution's stale index.
+      const cached = result.content as INodeExecutionData
+      return { hit: { ...cached, pairedItem: { item: itemIndex } }, miss: null }
     }
     return { hit: null, miss: item }
   } catch (error) {

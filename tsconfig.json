@@ -15,5 +15,5 @@
     "skipLibCheck": true
   },
   "include": ["nodes/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "nodes/**/__tests__/**"]
 }
