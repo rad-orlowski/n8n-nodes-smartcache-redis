@@ -48,6 +48,9 @@
   "peerDependencies": {
     "n8n-workflow": "*"
   },
+  "overrides": {
+    "isolated-vm": "7.0.1"
+  },
   "engines": {
     "node": ">=18.10"
   }
