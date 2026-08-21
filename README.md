@@ -53,7 +53,7 @@ Then create (or reuse) a **Redis credential**: host, port, database, password �
 1. Add the node; connect your data source to the **Input**
 2. Connect **Cache Miss** → your expensive node → back into the **Write** input
 3. Connect **Cache Hit** and the expensive node's output (or the Write pass-through) to the rest of your workflow
-4. Set **Cache Key Fields** (e.g. `id,url`) so the hash covers only the fields that identify the work — or leave empty to hash the full item JSON
+4. Set **Cache Key Fields** (e.g. `id,url` or `user.id` for nested fields) so the hash covers only the fields that identify the work — or leave empty to hash the full item JSON
 5. Set **TTL (Seconds)** — `0` keeps entries forever (until Redis LRU evicts them)
 
 ### Key prefix
@@ -67,7 +67,7 @@ Keys are written as `{prefix}/{sha256}.cache`. The prefix isolates caches from e
 | **Key Prefix** | String | `smartcache` | Redis key prefix; separate caches per workflow/purpose |
 | **Batch Mode** | Boolean | `false` | Process all input items as one cache unit |
 | **Force Miss** | Boolean | `false` | Bypass reads; regenerate and rewrite the cache |
-| **Cache Key Fields** | String | `` | Comma-separated fields hashed into the key (empty = whole item) |
+| **Cache Key Fields** | String | `` | Comma-separated fields hashed into the key, dot notation supported for nested fields (empty = whole item) |
 | **TTL (Seconds)** | Number | `86400` | Native Redis key expiry. `0` = never expires |
 
 ## Differences from upstream (S3) SmartCache

@@ -52,11 +52,26 @@ const getCachePathFromItem = (item: INodeExecutionData, context: IContextObject)
   return cachePath
 }
 
-const processItemData = (item: INodeExecutionData, cacheKeyFields: string) =>
+// Resolves a dotted path ("user.id") against a JSON value. Non-object/nullish
+// intermediates resolve to undefined rather than throwing.
+const getFieldByPath = (source: unknown, path: string): unknown =>
+  path
+    .split('.')
+    .map((segment) => segment.trim())
+    .reduce<unknown>(
+      (value, segment) =>
+        value != null && typeof value === 'object'
+          ? (value as Record<string, unknown>)[segment]
+          : undefined,
+      source,
+    )
+
+export const processItemData = (item: INodeExecutionData, cacheKeyFields: string) =>
   cacheKeyFields
     ? cacheKeyFields.split(',').reduce(
         (acc, field) => {
-          acc[field.trim()] = item.json[field.trim()]
+          const path = field.trim()
+          acc[path] = getFieldByPath(item.json, path)
           return acc
         },
         {} as Record<string, unknown>,
@@ -320,9 +335,9 @@ export class SmartCacheRedis implements INodeType {
         name: 'cacheKeyFields',
         type: 'string',
         default: '',
-        placeholder: 'id,name,url',
+        placeholder: 'id,name,url,user.id',
         description:
-          'Comma-separated list of fields to use for cache key generation. Leave empty to use entire input for more precise caching.',
+          'Comma-separated list of fields to use for cache key generation. Supports dot notation for nested fields (e.g. user.id). Leave empty to use entire input for more precise caching.',
       },
       {
         displayName: 'TTL (Seconds)',
