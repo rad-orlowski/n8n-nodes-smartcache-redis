@@ -9,7 +9,7 @@
 import { describe, expect, test } from 'vitest'
 import type { INodeExecutionData } from 'n8n-workflow'
 
-import { processItemData } from '../SmartCacheRedis.node'
+import { processItemData } from '../shared'
 
 describe('Cache Key Fields dot notation', () => {
   test('resolves a nested field via a dotted path instead of a literal flat key', () => {

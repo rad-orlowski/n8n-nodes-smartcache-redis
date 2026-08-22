@@ -10,7 +10,7 @@ import { describe, expect, test } from 'vitest'
 import type { IContextObject, INodeExecutionData } from 'n8n-workflow'
 
 import type { CacheBackend } from '../storage'
-import { processBatch, processSingleItem, writeToCache } from '../SmartCacheRedis.node'
+import { processBatch, processSingleItem, writeToCache } from '../shared'
 
 /** Real (non-mock) in-memory implementation of the CacheBackend interface, matching
  * what RedisBackend does: round-trip whatever is put(), pairedItem included. */
