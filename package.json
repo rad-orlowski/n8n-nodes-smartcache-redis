@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-smartcache-redis",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "n8n community node for intelligent caching with automatic hash generation and TTL support, backed by Redis. Fork of n8n-nodes-smartcache with the S3 storage backend replaced by Redis.",
   "keywords": [
     "n8n-community-node-package",
@@ -24,7 +24,8 @@
     "build": "tsc && copyfiles -f nodes/SmartCacheRedis/smartCacheRedis.svg dist/nodes/SmartCacheRedis/",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepublishOnly": "rm -rf dist && bun run build"
   },
   "files": [
     "dist"
